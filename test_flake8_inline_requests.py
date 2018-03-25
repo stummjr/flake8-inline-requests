@@ -9,6 +9,18 @@ def run_checker(code):
     return list(checker.run())
 
 
+def test_pass_with_meta_httpstatus_true():
+    code = "resp = yield Request('http://x.com', meta={'handle_httpstatus_all': True})"
+    errors = run_checker(code)
+    assert len(errors) == 0
+
+
+def test_pass_with_meta_httpstatus_eval_as_true():
+    code = "resp = yield Request('http://x.com', meta={'handle_httpstatus_all': 1})"
+    errors = run_checker(code)
+    assert len(errors) == 0
+
+
 def test_fail_missing_meta():
     code = "resp = yield Request('http://x.com')"
     lineno, colno, msg, cls = run_checker(code)[0]
@@ -33,7 +45,9 @@ def test_fail_with_meta_httpstatus_false():
     assert msg == InlineRequestsFinder.MSG
 
 
-def test_pass_with_meta_httpstatus_true():
-    code = "resp = yield Request('http://x.com', meta={'handle_httpstatus_all': True})"
-    errors = run_checker(code)
-    assert len(errors) == 0
+def test_fail_with_form_request():
+    code = "resp = yield FormRequest('http://x.com')"
+    lineno, colno, msg, cls = run_checker(code)[0]
+    assert lineno == 1
+    assert colno == 13
+    assert msg == InlineRequestsFinder.MSG

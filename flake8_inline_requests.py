@@ -1,5 +1,4 @@
 import ast
-from six import PY2, PY3
 
 __version__ = '0.0.1'
 
@@ -18,13 +17,8 @@ class InlineRequestsFinder(ast.NodeVisitor):
 
     def has_handle_httpstatus_all_true(self, meta_arg):
         for key, value in zip(meta_arg.value.keys, meta_arg.value.values):
-            if PY3:
-                if key.s == 'handle_httpstatus_all' and value.value:
-                    return True
-            elif PY2:
-                # TODO: make sure we catch evaluated-as-true values too
-                if key.s == 'handle_httpstatus_all' and value.id == 'True':
-                    return True
+            if key.s == 'handle_httpstatus_all' and ast.literal_eval(value):
+                return True
         return False
 
     def visit_Assign(self, node):

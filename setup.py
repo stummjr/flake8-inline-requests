@@ -16,6 +16,8 @@ setuptools.setup(
             'SIR00 = flake8_inline_requests:InlineRequestsChecker',
         ],
     },
+    install_requires=['flake8'],
+    tests_require=['pytest'],
     classifiers=[
         'Framework :: Flake8',
         'License :: OSI Approved :: MIT License',
